@@ -70,6 +70,7 @@ pipeline {
                 steps {
                     npm install netlify-cli --save-dev
                     netlify --version
+                    netlify status
                 }
             }
         }
