@@ -62,10 +62,11 @@ pipeline {
                 }
             }
         }
-        stage("deploy staging") {
+        stage("staging deploy") {
             agent {
                 docker {
                     image 'node:18-alpine'
+                    reuseNode true
                 }
                 steps {
                     npm install netlify-cli --save-dev
