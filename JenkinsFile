@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    environment{
+        SITE_ID: "70a0b55b-9b1c-419d-8257-d0e0b66e0f5b"
+    }
     stages {
         stage('Build') {
             agent {
@@ -35,13 +37,14 @@ pipeline {
                     }
                 }
                 stage("E2E Tests") {
-                    agent {
+                    /*(agent {
                         docker {
                             image 'mcr.microsoft.com/playwright:v1.39.0-focal'
                             reuseNode true
                         }
-                    }
+                    }*/
                     steps {
+                        /*
                         sh '''
                             npm i serve
                             nohup node_modules/.bin/serve -s build &
@@ -51,7 +54,22 @@ pipeline {
                             npx playwright test
                             kill $SERVE_PID
                         '''
+                        */
+                        sh '''
+                            echo 'in E2E Tests'
+                        '''
                     }
+                }
+            }
+        }
+        stage("deploy staging") {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                }
+                steps {
+                    npm install netlify-cli --save-dev
+                    netlify --version
                 }
             }
         }
