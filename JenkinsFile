@@ -87,9 +87,12 @@ pipeline {
                     reuseNode true
                 }
             }
+
             steps {
-                sh '''
+                script {
                     env.CI_ENVIRONMENT_URL = stagingUrl
+                }
+                sh '''
                     echo "${CI_ENVIRONMENT_URL}"
                     npm install @playwright/test --save-dev
                     npx playwright test
@@ -104,8 +107,8 @@ pipeline {
                 }
             }
             steps {
-                npm install netlify-cli node-jq --save-dev
                 sh '''
+                    npm install netlify-cli node-jq --save-dev
                     node_modules/.bin/netlify --version
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --prod --json > deploy-output.json
@@ -130,8 +133,10 @@ pipeline {
                 }
             }
             steps {
-                sh '''
+                script {
                     env.CI_ENVIRONMENT_URL = prodUrl
+                }
+                sh '''
                     npm install @playwright/test --save-dev
                     npx playwright test
                 '''
