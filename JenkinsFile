@@ -130,9 +130,8 @@ pipeline {
                 }
             }
             steps {
-                env.CI_ENVIRONMENT_URL = prodUrl
                 sh '''
-                    env.CI_ENVIRONMENT_URL = stagingUrl
+                    env.CI_ENVIRONMENT_URL = prodUrl
                     npm install @playwright/test --save-dev
                     npx playwright test
                 '''
