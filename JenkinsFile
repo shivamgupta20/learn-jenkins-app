@@ -96,6 +96,11 @@ pipeline {
                 '''
             }
         }
+        stage("Approval") {
+            steps{
+                input 'Deploy to Production?'
+            }
+        }
         stage("production deploy") {
             agent {
                 docker {
