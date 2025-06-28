@@ -72,7 +72,11 @@ pipeline {
 
                 '''
                 script {
-                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.\"deploy_url\"' 'deploy-output.json'", returnStdOut: true)
+                    stagingUrl = sh(
+                        script: "node_modules/.bin/node-jq -r '.\"deploy_url\"' deploy-output.json",
+                        returnStdOut: true
+                    ).trim()
+                    echo "Staging URL: ${stagingUrl}"
                 }
             }
         }
@@ -83,11 +87,9 @@ pipeline {
                     reuseNode true
                 }
             }
-            environment {
-                CI_ENVIRONMENT_URL = "${env.STAGING_URL}"
-            }
             steps {
                 sh '''
+                    env.CI_ENVIRONMENT_URL = stagingUrl
                     echo "${CI_ENVIRONMENT_URL}"
                     npm install @playwright/test --save-dev
                     npx playwright test
@@ -102,8 +104,8 @@ pipeline {
                 }
             }
             steps {
+                npm install netlify-cli node-jq --save-dev
                 sh '''
-                    npm install netlify-cli node-jq --save-dev
                     node_modules/.bin/netlify --version
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --prod --json > deploy-output.json
@@ -112,7 +114,11 @@ pipeline {
 
                 '''
                 script {
-                    env.PRODUCTION_URL = sh(script: "node_modules/.bin/node-jq -r '.\"deploy_url\"' 'deploy-output.json'", returnStdOut: true)
+                    prodUrl = sh(
+                        script: "node_modules/.bin/node-jq -r '.\"deploy_url\"' deploy-output.json",
+                        returnStdOut: true
+                    ).trim()
+                    echo "Production URL: ${prodUrl}"
                 }
             }
         }
@@ -123,11 +129,10 @@ pipeline {
                     reuseNode true
                 }
             }
-            environment {
-                CI_ENVIRONMENT_URL = "${env.PRODUCTION_URL}"
-            }
             steps {
+                env.CI_ENVIRONMENT_URL = prodUrl
                 sh '''
+                    env.CI_ENVIRONMENT_URL = stagingUrl
                     npm install @playwright/test --save-dev
                     npx playwright test
                 '''
