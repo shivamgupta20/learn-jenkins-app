@@ -66,13 +66,13 @@ pipeline {
                     npm install netlify-cli node-jq --save-dev
                     node_modules/.bin/netlify --version
                     node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --json >> deploy-output.json
+                    node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
                     
-                    echo 'Deployed site_id = ${NETLIFY_SITE_ID} to stage env'
+                    echo 'Deployed site_id = "${NETLIFY_SITE_ID}" to stage env'
 
                 '''
                 script {
-                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy-url' 'deploy-output.json'", returnStdOut: true)
+                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.\"deploy-url\"' 'deploy-output.json'", returnStdOut: true)
                 }
             }
         }
@@ -88,6 +88,7 @@ pipeline {
             }
             steps {
                 sh '''
+                    echo "${CI_ENVIRONMENT_URL}"
                     npm install @playwright/test --save-dev
                     npx playwright test
                 '''
@@ -105,13 +106,13 @@ pipeline {
                     npm install netlify-cli node-jq --save-dev
                     node_modules/.bin/netlify --version
                     node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --prod --json >> deploy-output.json
+                    node_modules/.bin/netlify deploy --dir=build --prod --json > deploy-output.json
                     
-                    echo 'Deployed site_id = ${NETLIFY_SITE_ID} to production env'
+                    echo 'Deployed site_id = "${NETLIFY_SITE_ID}" to production env'
 
                 '''
                 script {
-                    env.PRODUCTION_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy-url' 'deploy-output.json'", returnStdOut: true)
+                    env.PRODUCTION_URL = sh(script: "node_modules/.bin/node-jq -r '.\"deploy-url\"' 'deploy-output.json'", returnStdOut: true)
                 }
             }
         }
