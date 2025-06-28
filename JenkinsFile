@@ -72,7 +72,7 @@ pipeline {
 
                 '''
                 script {
-                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.\"deploy-url\"' 'deploy-output.json'", returnStdOut: true)
+                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.\"deploy_url\"' 'deploy-output.json'", returnStdOut: true)
                 }
             }
         }
@@ -112,7 +112,7 @@ pipeline {
 
                 '''
                 script {
-                    env.PRODUCTION_URL = sh(script: "node_modules/.bin/node-jq -r '.\"deploy-url\"' 'deploy-output.json'", returnStdOut: true)
+                    env.PRODUCTION_URL = sh(script: "node_modules/.bin/node-jq -r '.\"deploy_url\"' 'deploy-output.json'", returnStdOut: true)
                 }
             }
         }
