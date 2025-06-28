@@ -38,26 +38,17 @@ pipeline {
                     }
                 }
                 stage("E2E Tests") {
-                    /*(agent {
+                    agent {
                         docker {
-                            image 'mcr.microsoft.com/playwright:v1.39.0-focal'
+                            image 'mcr.microsoft.com/playwright:v1.53.0-noble'
                             reuseNode true
                         }
-                    }*/
+                    }
                     steps {
-                        /*
                         sh '''
-                            npm i serve
-                            nohup node_modules/.bin/serve -s build &
-                            SERVE_PID=$!
-                            sleep 10
-                            npx playwright install --with-deps
+                            npm install serve @playwright/test
+                            node_modules/.bin/serve -s build &
                             npx playwright test
-                            kill $SERVE_PID
-                        '''
-                        */
-                        sh '''
-                            echo 'in E2E Tests'
                         '''
                     }
                 }
