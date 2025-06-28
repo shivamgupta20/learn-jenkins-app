@@ -8,7 +8,7 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'node:18-bullseye'
                     reuseNode true
                 }
             }
@@ -27,7 +27,7 @@ pipeline {
                 stage("Unit Tests") {
                     agent {
                         docker {
-                            image 'node:18-alpine'
+                            image 'node:18-bullseye'
                             reuseNode true
                         }
                     }
@@ -57,17 +57,38 @@ pipeline {
         stage("staging deploy") {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'node:18-bullseye'
                     reuseNode true
                 }
             }
             steps {
                 sh '''
-                    npm install netlify-cli --save-dev
+                    npm install netlify-cli node-jq --save-dev
                     node_modules/.bin/netlify --version
                     node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --no-build
+                    node_modules/.bin/netlify deploy --dir=build --json >> deploy-output.json
+                    
                     echo 'Deployed site_id = ${NETLIFY_SITE_ID} to stage env'
+
+                '''
+                script {
+                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy-url' 'deploy-output.json'", returnStdOut: true)
+                }
+            }
+        }
+        stage("Staging E2E") {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.53.0-noble'
+                    reuseNode true
+                }
+            }
+            environment {
+                CI_ENVIRONMENT_URL = "${env.STAGING_URL}"
+            }
+            steps {
+                sh '''
+                    npx playwright test
                 '''
             }
         }
