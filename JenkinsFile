@@ -8,7 +8,7 @@ pipeline {
         stage("DockerImage") {
             steps {
                 sh '''
-                    docker build -t my-custom-image . 
+                    docker build -t my-custom-image .
                 '''
                 //this custom image can be used in all the stages but just for reference here it is updated only in production stage
             }
