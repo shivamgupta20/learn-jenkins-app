@@ -77,7 +77,7 @@ pipeline {
 
                 '''
                 script {
-                    stagingUrl = sh(script: "node-jq -r '.\"deploy_url\" ' deploy-output.json", returnStdout: true).trim()
+                    stagingUrl = sh(script: "jq -r '.\"deploy_url\" ' deploy-output.json", returnStdout: true).trim()
                     echo "Staging URL: ${stagingUrl}"
                 }
             }
@@ -120,7 +120,7 @@ pipeline {
                     echo 'Deployed site_id = "${NETLIFY_SITE_ID}" to production env'
                 '''
                 script {
-                    prodUrl = sh(script: "node-jq -r '.\"deploy_url\" ' deploy-output.json", returnStdout: true).trim()
+                    prodUrl = sh(script: "jq -r '.\"deploy_url\" ' deploy-output.json", returnStdout: true).trim()
                     echo "Staging URL: ${prodUrl}"
                 }
             }
